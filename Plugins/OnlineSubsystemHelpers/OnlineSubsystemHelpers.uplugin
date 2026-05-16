@@ -1,0 +1,45 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Online Subsystem Helpers",
+	"Description": "Predefined setup for Online Subsystems",
+	"Category": "Gameplay",
+	"CreatedBy": "A. Smirnov",
+	"CanContainContent": true,
+	"EnabledByDefault" : false,
+	"Modules": [
+		{
+			"Name": "OnlineSubsystemHelpersCommon",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "OnlineSubsystemHelpersClient",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"TargetDenyList": [
+				"Server"
+			]
+		},
+		{
+			"Name": "OnlineSubsystemHelpersServer",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"TargetAllowList": [
+				"Editor",
+				"Server"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "OnlineSubsystem",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystemSteam",
+			"Enabled": true
+		}
+	]
+}
