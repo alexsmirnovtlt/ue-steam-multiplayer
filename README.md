@@ -35,13 +35,15 @@ start "" "C:/Some/Path/To/Unreal/UE_5.7/Engine/Binaries/Win64/UnrealEditor.exe" 
 
 # Useful links
 ## Official guides:
-https://dev.epicgames.com/documentation/unreal-engine/online-subsystem-steam-interface-in-unreal-engine?application_version=5.7
-https://dev.epicgames.com/documentation/unreal-engine/using-steam-sockets-in-unreal-engine?application_version=5.7
+ * https://dev.epicgames.com/documentation/unreal-engine/online-subsystem-steam-interface-in-unreal-engine?application_version=5.7
+ * https://dev.epicgames.com/documentation/unreal-engine/using-steam-sockets-in-unreal-engine?application_version=5.7
 
-## Potential bug fixes and examples
-https://github.com/Luomu/ue-dediserversample
-https://forums.unrealengine.com/t/unexpected-gspolicyresponse-callback-ue5-dedicated-steam-server/2663077/15
+## Other links
+ * https://github.com/Luomu/ue-dediserversample
+ * https://forums.unrealengine.com/t/unexpected-gspolicyresponse-callback-ue5-dedicated-steam-server/2663077/15
+ * https://kb.heathen.group/steam/configuration/unreal-configuration
 
 
 # TODO
  * handle session destruction better for the Client and implement it on the Server
+ * make Online Susbsystem Steam actually work in builds
