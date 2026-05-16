@@ -18,12 +18,13 @@ Basic multiplayer functionality for Dedicated and Listen Servers with Steam back
  - Steam: Not open in the background
 
  - Server must be started prior to PIE play. For example one can use the following .bat file which is put next to .uproject:
-start "" "C:/Some/Path/To/Unreal/UE_5.7/Engine/Binaries/Win64/UnrealEditor.exe" "%CD%/SteamMultiplayer.uproject" /OnlineSubsystemHelpers/Maps/GameplayLevel -server -log -nosteam -lobbyname="my custom lobby"
+> start "" "C:/Some/Path/To/Unreal/UE_5.7/Engine/Binaries/Win64/UnrealEditor.exe" "%CD%/SteamMultiplayer.uproject" /OnlineSubsystemHelpers/Maps/GameplayLevel -server -log -nosteam -lobbyname="my custom lobby"
 
 ## Dedicated server (Subsystem Steam)
  - Build Targets: Development Server and Development Client
 
- - Server can be started with the following .bat file (-lobbyname and -steam_token are optional): start SteamMultiplayerServer.exe -lobbyname="my custom lobby" -log -steam_token="LETTERS_AND_NUMBERS_TOKEN"
+ - Server can be started with the following .bat file (-lobbyname and -steam_token are optional):
+> start SteamMultiplayerServer.exe -lobbyname="my custom lobby" -log -steam_token="LETTERS_AND_NUMBERS_TOKEN"
 
 ### Notes:
  * Dedicated Server requires steam_appid.txt at SteamMultiplayer/Binaries/Win64/ to be put manually as of UE 5.7
@@ -43,7 +44,6 @@ start "" "C:/Some/Path/To/Unreal/UE_5.7/Engine/Binaries/Win64/UnrealEditor.exe" 
  * https://forums.unrealengine.com/t/unexpected-gspolicyresponse-callback-ue5-dedicated-steam-server/2663077/15
  * https://kb.heathen.group/steam/configuration/unreal-configuration
 
-
 # TODO
  * handle session destruction better for the Client and implement it on the Server
- * make Online Susbsystem Steam actually work in builds
+ * make Online Subsystem Steam actually work in builds
