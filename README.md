@@ -28,6 +28,7 @@ Basic multiplayer functionality for Dedicated and Listen Servers with Steam back
 
 ### Notes:
  * Dedicated Server requires steam_appid.txt at SteamMultiplayer/Binaries/Win64/ to be put manually as of UE 5.7
+ * Steam token can be created at https://steamcommunity.com/dev/managegameservers
 
 ## Listen server (Subsystem Steam)
  - Build Target: Development
