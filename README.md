@@ -45,5 +45,5 @@ Basic multiplayer functionality for Dedicated and Listen Servers with Steam back
  * https://kb.heathen.group/steam/configuration/unreal-configuration
 
 # Troobleshooting
-## Dedicated server shown on Steam -> View -> Game Servers is on 'LAN' tab instead of 'Internet' (UE5.5) or server creation fails with "LogOnline: Warning: STEAM: Unexpected GSPolicyResponse callback" (UE5.7)
- * getting public static IP from my Internet Provider actually helped to resolve both issues. See CGNAT(Carrier-Grade NAT)
+ * Dedicated server shown on Steam -> View -> Game Servers is on 'LAN' tab instead of 'Internet' (UE5.5) or server creation fails with "LogOnline: Warning: STEAM: Unexpected GSPolicyResponse callback" (UE5.7)
+     * getting public static IP from my Internet Provider actually helped to resolve both issues. See CGNAT(Carrier-Grade NAT)
