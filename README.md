@@ -28,7 +28,6 @@ Basic multiplayer functionality for Dedicated and Listen Servers with Steam back
 
 ### Notes:
  * Dedicated Server requires steam_appid.txt at SteamMultiplayer/Binaries/Win64/ to be put manually as of UE 5.7
- * 5.7 Dedicated Server will fail with "LogOnline: Warning: STEAM: Unexpected GSPolicyResponse callback"
 
 ## Listen server (Subsystem Steam)
  - Build Target: Development
@@ -38,12 +37,13 @@ Basic multiplayer functionality for Dedicated and Listen Servers with Steam back
 ## Official guides:
  * https://dev.epicgames.com/documentation/unreal-engine/online-subsystem-steam-interface-in-unreal-engine?application_version=5.7
  * https://dev.epicgames.com/documentation/unreal-engine/using-steam-sockets-in-unreal-engine?application_version=5.7
+ * https://dev.epicgames.com/documentation/unreal-engine/API/Plugins/OnlineSubsystem/FOnlineSessionSettings?application_version=5.7
 
 ## Other links
  * https://github.com/Luomu/ue-dediserversample
  * https://forums.unrealengine.com/t/unexpected-gspolicyresponse-callback-ue5-dedicated-steam-server/2663077/15
  * https://kb.heathen.group/steam/configuration/unreal-configuration
 
-# TODO
- * handle session destruction better for the Client and implement it on the Server
- * make Online Subsystem Steam actually work in builds
+# Troobleshooting
+## Dedicated server shown on Steam -> View -> Game Servers is on 'LAN' tab instead of 'Internet' (UE5.5) or server creation fails with "LogOnline: Warning: STEAM: Unexpected GSPolicyResponse callback" (UE5.7)
+ * getting public static IP from my Internet Provider actually helped to resolve both issues. See CGNAT(Carrier-Grade NAT)
