@@ -1,6 +1,9 @@
 # ue-steam-multiplayer
 Basic multiplayer functionality for Dedicated and Listen Servers with Steam backend
 
+# Overview
+ * Lobby Level which is used for hosting and joining sessions + barebones Gameplay Level
+
 # How to check if its working
 
 ## PIE Listen Server (Subsystem NULL)
@@ -27,10 +30,12 @@ Basic multiplayer functionality for Dedicated and Listen Servers with Steam back
 > start SteamMultiplayerServer.exe -lobbyname="my custom lobby" -log -steam_token="LETTERS_AND_NUMBERS_TOKEN"
 
 ### Notes:
- * Dedicated Server requires steam_appid.txt at SteamMultiplayer/Binaries/Win64/ to be put manually as of UE 5.7
+ * steam_appid.txt at SteamMultiplayer/Binaries/Win64/ requires to be put there manually as of UE 5.7 (non Shipping)
+ * For 480 AppID player`s download region must be the same (Steam -> Settings -> Downloads -> Download Region)
  * Steam token can be created at https://steamcommunity.com/dev/managegameservers
 
 ## Listen server (Subsystem Steam)
+ - DefaultEngine.ini: bInitServerOnClient=True
  - Build Target: Development
  - Two different machines with different Steam accounts are required. One machine hosts and other joins
 
@@ -40,11 +45,16 @@ Basic multiplayer functionality for Dedicated and Listen Servers with Steam back
  * https://dev.epicgames.com/documentation/unreal-engine/using-steam-sockets-in-unreal-engine?application_version=5.7
  * https://dev.epicgames.com/documentation/unreal-engine/API/Plugins/OnlineSubsystem/FOnlineSessionSettings?application_version=5.7
 
-## Other links
+## Other links that helped make it all work
  * https://github.com/Luomu/ue-dediserversample
  * https://forums.unrealengine.com/t/unexpected-gspolicyresponse-callback-ue5-dedicated-steam-server/2663077/15
  * https://kb.heathen.group/steam/configuration/unreal-configuration
+ * https://partner.steamgames.com/doc/sdk/api/example
+ * https://partner.steamgames.com/doc/api/ISteamMatchmakingServers#MatchMakingKeyValuePair_t
 
 # Troobleshooting
  * Dedicated server shown on Steam -> View -> Game Servers is on 'LAN' tab instead of 'Internet' (UE5.5) or server creation fails with "LogOnline: Warning: STEAM: Unexpected GSPolicyResponse callback" (UE5.7)
      * getting public static IP from my Internet Provider actually helped to resolve both issues. See CGNAT(Carrier-Grade NAT)
+
+# TODO
+ * Linux server build
