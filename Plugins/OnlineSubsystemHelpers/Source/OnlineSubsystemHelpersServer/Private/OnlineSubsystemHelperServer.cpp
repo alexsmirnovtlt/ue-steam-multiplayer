@@ -60,9 +60,9 @@ void UOnlineSubsystemHelperServer::CreateSession()
 	FString CustomLobbyName; // lobby name as predefined mapname value
 	if (!FParse::Value(FCommandLine::Get(), TEXT("lobbyname="), CustomLobbyName))
 		CustomLobbyName = Settings->DefaultLobbyName;
-
-	SessionSettings.Set(SETTING_MAPNAME, CustomLobbyName, EOnlineDataAdvertisementType::Type::ViaOnlineService);
-	SessionSettings.Set(SEARCH_KEYWORDS, Settings->LobbyUniqueString, EOnlineDataAdvertisementType::Type::ViaOnlineService); // 480 appid only
+	
+	SessionSettings.Set(SEARCH_KEYWORDS, CustomLobbyName, EOnlineDataAdvertisementType::Type::ViaOnlineService);
+	SessionSettings.Set(SETTING_MAPNAME, Settings->LobbyUniqueString, EOnlineDataAdvertisementType::Type::ViaOnlineService); // 480 appid only
 
 	UE_LOG(OnlineSubsystemHelpersServerLog, Warning,
 		TEXT("Creating new session with %d additional keys"), SessionSettings.Settings.Num());

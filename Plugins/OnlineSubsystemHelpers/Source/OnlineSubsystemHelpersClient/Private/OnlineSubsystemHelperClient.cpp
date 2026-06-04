@@ -69,7 +69,7 @@ void UOnlineSubsystemHelperClient::FindSessions()
 #if WITH_CLIENT_CODE
 		LobbySearchSettings.Get()->QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
 #endif
-		LobbySearchSettings.Get()->QuerySettings.Set(SEARCH_KEYWORDS, Settings->LobbyUniqueString, EOnlineComparisonOp::Equals); // 480 appid only
+		LobbySearchSettings.Get()->QuerySettings.Set(SETTING_MAPNAME, Settings->LobbyUniqueString, EOnlineComparisonOp::Equals); // 480 appid only
 	}
 
 	FOnFindSessionsCompleteDelegate FindSessionsCompleteDelegate;
@@ -95,7 +95,7 @@ TMap<int32, FString> UOnlineSubsystemHelperClient::GetSessionSearchResults()
 	for (uint8 i = 0; i < LobbySearchSettings.Get()->SearchResults.Num(); i++)
 	{
 		FString LobbyName;
-		LobbySearchSettings.Get()->SearchResults[i].Session.SessionSettings.Get(SETTING_MAPNAME, LobbyName);	
+		LobbySearchSettings.Get()->SearchResults[i].Session.SessionSettings.Get(SEARCH_KEYWORDS, LobbyName);
 		if (!LobbyName.IsEmpty()) Results.Add(i, LobbyName);
 	}
 	return Results;
@@ -146,8 +146,8 @@ void UOnlineSubsystemHelperClient::Host(FString LobbyName)
 	SessionSettings.bIsLANMatch = true;
 #endif
 
-	SessionSettings.Set(SETTING_MAPNAME, LobbyName, EOnlineDataAdvertisementType::Type::ViaOnlineService);
-	SessionSettings.Set(SEARCH_KEYWORDS, Settings->LobbyUniqueString, EOnlineDataAdvertisementType::Type::ViaOnlineService); // 480 appid only
+	SessionSettings.Set(SEARCH_KEYWORDS, LobbyName, EOnlineDataAdvertisementType::Type::ViaOnlineService);
+	SessionSettings.Set(SETTING_MAPNAME, Settings->LobbyUniqueString, EOnlineDataAdvertisementType::Type::ViaOnlineService); // 480 appid only
 
 	UE_LOG(OnlineSubsystemHelpersClientLog, Warning, TEXT("Creating new session with %d additional keys"),
 		SessionSettings.Settings.Num());
