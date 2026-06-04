@@ -10,5 +10,8 @@ public class SteamMultiplayerTarget : TargetRules
 		IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
 		
 		ExtraModuleNames.AddRange( new string[] { "SteamMultiplayer" } );
+
+		GlobalDefinitions.Add("UE_PROJECT_STEAMGAMEDIR=\"spacewar\"");
+		GlobalDefinitions.Add("UE_PROJECT_STEAMSHIPPINGID=480");
 	}
 }
