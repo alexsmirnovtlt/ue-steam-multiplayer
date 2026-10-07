@@ -15,8 +15,6 @@ public:
 
 	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category = "General Settings")
 	bool bClientCanHost = true;
-	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category = "General Settings")
-	FName DefaultSessionName = FName(TEXT("SESSION"));
 	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category = "General Settings", meta = (Tooltip = "Some random string to filter out servers for 480 dev Steam AppID"))
 	FString LobbyUniqueString = FString("MyVeryCustomLobby");
 	UPROPERTY(Config, EditDefaultsOnly, BlueprintReadOnly, Category = "General Settings")

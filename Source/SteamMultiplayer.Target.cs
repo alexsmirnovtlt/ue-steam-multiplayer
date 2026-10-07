@@ -1,4 +1,5 @@
 using UnrealBuildTool;
+using UnrealBuildBase;
 using System.Collections.Generic;
 
 public class SteamMultiplayerTarget : TargetRules
@@ -11,7 +12,12 @@ public class SteamMultiplayerTarget : TargetRules
 		
 		ExtraModuleNames.AddRange( new string[] { "SteamMultiplayer" } );
 
-		GlobalDefinitions.Add("UE_PROJECT_STEAMGAMEDIR=\"spacewar\"");
-		GlobalDefinitions.Add("UE_PROJECT_STEAMSHIPPINGID=480");
+		if (!Unreal.IsEngineInstalled())
+		{
+			BuildEnvironment = TargetBuildEnvironment.Unique;
+
+			GlobalDefinitions.Add("UE_PROJECT_STEAMGAMEDIR=\"spacewar\"");
+			GlobalDefinitions.Add("UE_PROJECT_STEAMSHIPPINGID=480");
+		}
 	}
 }

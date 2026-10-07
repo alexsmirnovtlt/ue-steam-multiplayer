@@ -10,13 +10,15 @@
 #include "Interfaces/OnlineSessionDelegates.h"
 #include "Interfaces/OnlineIdentityInterface.h"
 
-#include "ThirdParty/Steamworks/Steamv161/sdk/public/steam/steam_gameserver.h"
+#ifdef UE_PROJECT_STEAMPRODUCTNAME
+#include "steam/steam_gameserver.h"
+#endif
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(OnlineSubsystemHelperServer)
 
 bool UOnlineSubsystemHelperServer::ShouldCreateSubsystem(UObject* Outer) const
 {
-	return Outer->GetWorld()->IsNetMode(NM_DedicatedServer);
+	return IsRunningDedicatedServer();
 }
 
 void UOnlineSubsystemHelperServer::Initialize(FSubsystemCollectionBase& Collection)
@@ -31,11 +33,13 @@ void UOnlineSubsystemHelperServer::Initialize(FSubsystemCollectionBase& Collecti
 	}
 	else if (IOnlineSubsystem::Get()->GetSubsystemName() == STEAM_SUBSYSTEM)
 	{
+#ifdef UE_PROJECT_STEAMPRODUCTNAME
 		FString SteamLoginToken;
 		if (FParse::Value(FCommandLine::Get(), TEXT("steam_token="), SteamLoginToken))
 			SteamGameServer()->LogOn(TCHAR_TO_ANSI(*SteamLoginToken)); 
 		else
 			SteamGameServer()->LogOnAnonymous();
+#endif
 	}
 	else
 	{
@@ -72,7 +76,7 @@ void UOnlineSubsystemHelperServer::CreateSession()
 	IOnlineSubsystem::Get()->GetSessionInterface()->AddOnCreateSessionCompleteDelegate_Handle(
 		MoveTemp(CreateSessionCompleteDelegate));
 
-	IOnlineSubsystem::Get()->GetSessionInterface()->CreateSession(0, Settings->DefaultSessionName, SessionSettings);
+	IOnlineSubsystem::Get()->GetSessionInterface()->CreateSession(0, NAME_GameSession, SessionSettings);
 }
 
 void UOnlineSubsystemHelperServer::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -81,6 +85,7 @@ void UOnlineSubsystemHelperServer::OnCreateSessionComplete(FName SessionName, bo
 		TEXT("OnCreateSessionComplete success: %s"), bWasSuccessful ? *FString("true") : *FString("false"));
 }
 
+#ifdef UE_PROJECT_STEAMPRODUCTNAME
 void UOnlineSubsystemHelperServer::OnSteamServersConnected(SteamServersConnected_t* CallbackData)
 {
 	if(this->HasAnyFlags(RF_ClassDefaultObject))
@@ -110,3 +115,4 @@ void UOnlineSubsystemHelperServer::OnSteamServersConnected(SteamServersConnected
 	}
 	else*/ CreateSession();
 }
+#endif

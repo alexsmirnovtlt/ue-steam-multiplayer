@@ -33,11 +33,12 @@ Basic multiplayer functionality for Dedicated and Listen Servers with Steam back
  * steam_appid.txt at SteamMultiplayer/Binaries/Win64/ requires to be put there manually as of UE 5.7 (non Shipping)
  * For 480 AppID player`s download region must be the same (Steam -> Settings -> Downloads -> Download Region)
  * Steam token can be created at https://steamcommunity.com/dev/managegameservers
+ * Client by design will search for dedicated servers only
 
 ## Listen server (Subsystem Steam)
- - DefaultEngine.ini: bInitServerOnClient=True
  - Build Target: Development
  - Two different machines with different Steam accounts are required. One machine hosts and other joins
+ - Join by invite and presence should also work
 
 # Useful links
 ## Official guides:

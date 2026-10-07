@@ -1,0 +1,50 @@
+Claude Code Review - OnlineSubsystemHelpers plugin
+Date: 2026-10-07
+Scope: Plugins/OnlineSubsystemHelpers/Source (C++) and Config
+
+==================================================================
+OPEN ISSUES
+==================================================================
+
+1. Login() never completes if the user is not already logged in
+   File: Source/OnlineSubsystemHelpersClient/Private/OnlineSubsystemHelperClient.cpp (Login / OnLoggedIn)
+   - The login-complete delegate is bound, but IdentityInterface->Login() / AutoLogin(0) is never called,
+     so the delegate never fires.
+   - OnLoggedIn() does not call PostLogin() on success, so bLoggedIn stays false and
+     OnLoginCompleted is never broadcast.
+   - Currently works only because Steam is usually already logged in at startup.
+   Fix:
+     - Call IdentityInterface->AutoLogin(0) after binding the delegate.
+     - In OnLoggedIn(), call PostLogin() when bWasSuccessful is true.
+
+2. Joined session is orphaned when the travel step fails
+   Files: OnlineSubsystemHelperClient.cpp (OnJoinSessionComplete)
+          Subsystems/FriendJoinGameInstanceSubsystem.cpp (OnJoinSessionComplete)
+   - JoinSession has already succeeded at that point. If GetResolvedConnectString() returns false,
+     or GetFirstLocalPlayerController() is null, the function returns without destroying the session.
+   - On Steam the user stays inside the lobby; every later invite is rejected
+     ("User already in a session") and browser Join fails with AlreadyInSession.
+   Fix:
+     - Call DestroySession(NAME_GameSession) on those failure paths.
+
+3. Stale sessions after leaving a game
+   - The default UGameInstance uses base UOnlineSession, whose HandleDisconnect does not destroy
+     NAME_GameSession (UOnlineSessionClient does). Verify against your engine version.
+   - Result: after disconnecting or travelling back to LobbyLevel, the session can remain.
+     Host is covered by the widget calling CloseOpenedSession first; the invite path is not -
+     FriendJoinGameInstanceSubsystem refuses to join instead of leaving the old session.
+   Fix (pick one):
+     - Destroy NAME_GameSession when LobbyLevel loads.
+     - In OnSessionUserInviteAccepted, if a session exists, DestroySession and call JoinSession
+       from the destroy-complete callback.
+   Note: do not switch GetOnlineSessionClass() to UOnlineSessionClient just for cleanup - it also
+   subscribes to OnSessionUserInviteAccepted and would race with FriendJoinGameInstanceSubsystem.
+
+==================================================================
+DEFERRED (by decision)
+==================================================================
+
+4. Server: SteamServersConnected_t fires again after a reconnect -> CreateSession on an existing
+   session fails. SteamServerConnectFailure_t / SteamServersDisconnected_t are not handled.
+5. Server: possible double logon - verify whether the Steam OSS create-server task calls
+   LogOnAnonymous() after the explicit LogOn(token).

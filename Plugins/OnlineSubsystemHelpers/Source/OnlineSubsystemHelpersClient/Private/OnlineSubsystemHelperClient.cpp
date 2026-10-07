@@ -3,6 +3,7 @@
 #include "OnlineSubsystemHelpersClient/OnlineSubsystemHelpersClient.h"
 #include "OnlineSubsystemHelpersCommonSettings.h"
 
+#include "OnlineSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "Online/OnlineSessionNames.h"
 #include "Interfaces/OnlineSessionInterface.h"
@@ -66,8 +67,10 @@ void UOnlineSubsystemHelperClient::FindSessions()
 		LobbySearchSettings.Get()->bIsLanQuery = true;
 #endif
 
-#if WITH_CLIENT_CODE
+#if !WITH_SERVER_CODE // Client target will look for dedicated servers exclusively but Game target for lobbies only
 		LobbySearchSettings.Get()->QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
+#else
+		LobbySearchSettings.Get()->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
 #endif
 		LobbySearchSettings.Get()->QuerySettings.Set(SETTING_MAPNAME, Settings->LobbyUniqueString, EOnlineComparisonOp::Equals); // 480 appid only
 	}
@@ -84,7 +87,6 @@ void UOnlineSubsystemHelperClient::OnFindSessionsCompleted(bool bWasSuccessful)
 {
 	IOnlineSubsystem::Get()->GetSessionInterface()->ClearOnFindSessionsCompleteDelegate_Handle(CurrentDelegateHandle);
 
-	if (!ensure(bWasSuccessful)) return;
 	UE_LOG(OnlineSubsystemHelpersClientLog, Warning, TEXT("Sessions found: %d"), LobbySearchSettings.Get()->SearchResults.Num());
 	OnSessionsFound.Broadcast();
 }
@@ -113,23 +115,28 @@ void UOnlineSubsystemHelperClient::Join(int32 SearchResultsIndex, FString Additi
 	CurrentDelegateHandle = IOnlineSubsystem::Get()->GetSessionInterface()->
 		AddOnJoinSessionCompleteDelegate_Handle(MoveTemp(JoinSessionCompleteDelegate));
 	IOnlineSubsystem::Get()->GetSessionInterface()->JoinSession(
-		0,
-		GetDefault<UOnlineSubsystemHelpersCommonSettings>()->DefaultSessionName,
-		LobbySearchSettings.Get()->SearchResults[SearchResultsIndex]);
+		0, NAME_GameSession, LobbySearchSettings.Get()->SearchResults[SearchResultsIndex]);
 }
 
 void UOnlineSubsystemHelperClient::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
 	IOnlineSubsystem::Get()->GetSessionInterface()->ClearOnJoinSessionCompleteDelegate_Handle(CurrentDelegateHandle);
 
+	if(Result != EOnJoinSessionCompleteResult::Success)
+	{
+		UE_LOG(OnlineSubsystemHelpersClientLog, Error, TEXT("Cannot join: %s'"), LexToString(Result));
+		return;
+	}
+
 	FString ConnectionInfo;
-	IOnlineSubsystem::Get()->GetSessionInterface()->GetResolvedConnectString(
-		GetDefault<UOnlineSubsystemHelpersCommonSettings>()->DefaultSessionName, ConnectionInfo);
+	if(IOnlineSubsystem::Get()->GetSessionInterface()->GetResolvedConnectString(
+		NAME_GameSession, ConnectionInfo))
+	{
+		UE_LOG(OnlineSubsystemHelpersClientLog, Warning, TEXT("Join session`s connection info str: '%s'"), *ConnectionInfo);
+		UE_LOG(OnlineSubsystemHelpersClientLog, Warning, TEXT("Join session`s additional options str: '%s'"), *AdditionalOptions);
 
-	UE_LOG(OnlineSubsystemHelpersClientLog, Warning, TEXT("Join session`s connection info str: '%s'"), *ConnectionInfo);
-	UE_LOG(OnlineSubsystemHelpersClientLog, Warning, TEXT("Join session`s additional options str: '%s'"), *AdditionalOptions);
-
-	GetWorld()->GetFirstPlayerController()->ClientTravel(ConnectionInfo + AdditionalOptions, ETravelType::TRAVEL_Absolute);
+		GetWorld()->GetFirstPlayerController()->ClientTravel(ConnectionInfo + AdditionalOptions, ETravelType::TRAVEL_Absolute);
+	}
 }
 
 void UOnlineSubsystemHelperClient::Host(FString LobbyName)
@@ -138,10 +145,13 @@ void UOnlineSubsystemHelperClient::Host(FString LobbyName)
 
 	FOnlineSessionSettings SessionSettings = FOnlineSessionSettings();
 	SessionSettings.NumPublicConnections = Settings->NumPublicConnections;
-	SessionSettings.bShouldAdvertise = true;
-	SessionSettings.bAllowJoinInProgress = true;
+
 	SessionSettings.bUseLobbiesIfAvailable = true;
+	SessionSettings.bAllowJoinViaPresence = true;
+	SessionSettings.bAllowJoinInProgress = true;
+	SessionSettings.bShouldAdvertise = true;
 	SessionSettings.bUsesPresence = true;
+	SessionSettings.bAllowInvites = true;
 #if WITH_EDITOR
 	SessionSettings.bIsLANMatch = true;
 #endif
@@ -157,7 +167,7 @@ void UOnlineSubsystemHelperClient::Host(FString LobbyName)
 	CurrentDelegateHandle = IOnlineSubsystem::Get()->GetSessionInterface()->AddOnCreateSessionCompleteDelegate_Handle(
 		MoveTemp(CreateSessionCompleteDelegate));
 
-	IOnlineSubsystem::Get()->GetSessionInterface()->CreateSession(0, Settings->DefaultSessionName, SessionSettings);
+	IOnlineSubsystem::Get()->GetSessionInterface()->CreateSession(0, NAME_GameSession, SessionSettings);
 }
 
 void UOnlineSubsystemHelperClient::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
@@ -173,14 +183,11 @@ void UOnlineSubsystemHelperClient::OnCreateSessionComplete(FName SessionName, bo
 
 bool UOnlineSubsystemHelperClient::HaveOpenedSession() const
 {
-	const auto Settings = GetDefault<UOnlineSubsystemHelpersCommonSettings>();
-	return IOnlineSubsystem::Get()->GetSessionInterface()->GetNamedSession(Settings->DefaultSessionName) != nullptr;
+	return IOnlineSubsystem::Get()->GetSessionInterface()->GetNamedSession(NAME_GameSession) != nullptr;
 }
 
 void UOnlineSubsystemHelperClient::CloseOpenedSession()
 {
 	UE_LOG(OnlineSubsystemHelpersClientLog, Warning, TEXT("Destroying previous session"));
-
-	IOnlineSubsystem::Get()->GetSessionInterface()->DestroySession(
-		GetDefault<UOnlineSubsystemHelpersCommonSettings>()->DefaultSessionName);
+	IOnlineSubsystem::Get()->GetSessionInterface()->DestroySession(NAME_GameSession);
 }
